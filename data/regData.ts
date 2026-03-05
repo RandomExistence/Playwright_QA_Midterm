@@ -1,4 +1,5 @@
 export class ValidData {
+  readonly blank = ''
 
   readonly firstname_default = 'John';
   readonly lastname_default = 'Doe';
@@ -8,7 +9,7 @@ export class ValidData {
   readonly currentaddress_default = '432 Channa Road, Bangkok';
 
   readonly firstname_without_space = 'Jeniffer';
-  readonly firstname_with_space = "Pauli 'O";
+  readonly firstname_with_space = "Pauli O";
   readonly lastname_without_space = 'Crackily';
   readonly lastname_with_space = 'Siri Chaiya';
   readonly email_simple = 'user02@gmail.com';
@@ -17,7 +18,7 @@ export class ValidData {
   readonly mobile_unconventional = '0221220505';
   readonly birthdate_Jan_1_1900 = '01 Jan 1900';
   readonly birthdate_Dec_31_2100 = '31 Dec 2100';
-  readonly currentaddress_without_newline = '215/25 Soi Taweewatana Sathupradit Road Chongnonsi';
+  readonly currentaddress_with_number = '215/25 Soi Taweewatana Sathupradit Road Chongnonsi';
   readonly currentaddress_with_newline =
   `
     Address 1:
@@ -33,6 +34,8 @@ export class ValidData {
 export class InvalidData {
   readonly empty = '';
   readonly gibberish = '8u9int4yq';
+  readonly firstname_has_nonalphabet = 'Jumpy429#c00lkidz_';
+  readonly lastname_has_nonalphabet = 'Bite of 1987'
   readonly email_no_username = '@mail.com';
   readonly email_no_at = 'user02gmail.com';
   readonly email_no_mail_server = 'user02@.dwcom';
@@ -142,6 +145,7 @@ export class FilePath {
 
 export class Assertion {
   readonly color_red_error = 'rgb(220, 53, 69)'
+  readonly color_green_valid = 'rgb(25, 135, 84)'
   readonly css_border_color = 'border-color'
   readonly css_border_bottom_color = 'border-bottom-color'
   readonly css_border_left_color = 'border-left-color'
@@ -152,4 +156,6 @@ export class Assertion {
   readonly ten_mb_png_file = '10mb.png'
   readonly one_mb_jpg_file = '1mb.jpg'
   readonly ten_mb_jpg_file = '10mb.jpg'
+
+  readonly modal_dateofbirth_default = '24 March,2004'
 }

@@ -34,6 +34,9 @@ export class RegPage {
   readonly stateDropdownContainer: Locator;
   readonly cityDropdownContainer: Locator;
 
+  readonly statePlaceholderDiv: Locator;
+  readonly cityPlaceholderDiv: Locator;
+
   readonly summarySubmitModal: Locator;
   readonly studentnameModalRow: Locator;
   readonly studentemailModalRow: Locator;
@@ -45,6 +48,7 @@ export class RegPage {
   readonly pictureModalRow: Locator;
   readonly addressModalRow: Locator;
   readonly stateandcityModalRow: Locator;
+  readonly closeModalButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -72,12 +76,15 @@ export class RegPage {
     this.cityOptionList = this.page.locator('#react-select-4-listbox')
 
     this.submitButton = this.page.getByRole('button', { name: 'Submit' })
-
+    
     this.subjectOptionContainer = this.page.locator('#subjectsContainer')
     this.subjectOptionPill = this.page.locator('#subjectsContainer .subjects-auto-complete__multi-value__label')
     this.stateDropdownContainer = this.page.locator('#state')
     this.cityDropdownContainer = this.page.locator('#city')
-
+    
+    this.statePlaceholderDiv = this.page.locator('#react-select-3-placeholder')
+    this.cityPlaceholderDiv = this.page.locator('#react-select-4-placeholder')
+    
     this.summarySubmitModal = this.page.getByRole('dialog', { name: 'Thanks for submitting the form' })
     this.studentnameModalRow = this.page.locator('tr', { hasText: 'Student Name' });
     this.studentemailModalRow = this.page.locator('tr', { hasText: 'Student Email'});
@@ -89,10 +96,13 @@ export class RegPage {
     this.pictureModalRow = this.page.locator('tr', { hasText: 'Picture'});
     this.addressModalRow = this.page.locator('tr', { hasText: 'Address'});
     this.stateandcityModalRow = this.page.locator('tr', { hasText: 'State and City'});
+    this.closeModalButton = this.page.getByRole('button', { name: 'Close' })
   }
 
   async goto() {
-    await this.page.goto(this.url)
+    await this.page.goto(this.url, {
+      timeout: 90000 // allow more time for when you run all tests
+    })
   }
   
   async fillFirstname(firstname: string) {
@@ -163,6 +173,11 @@ export class RegPage {
   async clickSubmitButton() {
     await this.submitButton.scrollIntoViewIfNeeded();
     await this.submitButton.click();
+  }
+
+  async clickCloseModalButton() {
+    await this.closeModalButton.scrollIntoViewIfNeeded();
+    await this.closeModalButton.click();
   }
 
   // ------------------------------------ UTILITIES ------------------------------------ //
