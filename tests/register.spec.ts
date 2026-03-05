@@ -89,7 +89,6 @@ test('invalid fields should prevent user from submitting the form', async ({ pag
   await expect(regPage.summarySubmitModal).not.toBeVisible();
 })
 
-// birthday selection
 test('birthday is selectable via datepicker dialog', async ({ page }) => {
   test.setTimeout(150000); // 150 seconds, the normal timeout is 30s which is not sufficient for this test
   const regPage = new RegPage(page)
@@ -122,11 +121,10 @@ test('birthday is selectable via datepicker dialog', async ({ page }) => {
   }
 })
 
-// birthday default
-test('birthday defaults to today', async () => {
+test.describe('birthday defaults to today', async () => {
   test('birthday defaults to 31 Dec 2100', async ({ page }) => {
     const regPage = new RegPage(page)
-    await regPage.setTime(2020, 11, 31)
+    await regPage.setTime(2100, 11, 31)
     await regPage.goto()
     await expect(regPage.birthdateTextInput).toHaveValue('31 Dec 2100')
   });
@@ -146,8 +144,7 @@ test('birthday defaults to today', async () => {
   });
 });
 
-// subjects select and remove
-test('subjects', async () => {
+test.describe('user can select and remove subjects', async () => {
   test('select one subject', async ({ page }) => {
     const regPage = new RegPage(page)
     await regPage.goto();
@@ -170,9 +167,8 @@ test('subjects', async () => {
     await regPage.selectSubjectPill(constant.COMMERCE);
 
     await regPage.removeSubjectPill(constant.COMPUTER_SCIENCE);
-    await expect(regPage.subjectOptionContainer).not.toContainText(constant.COMPUTER_SCIENCE);
-    await expect(regPage.subjectOptionContainer).toContainText(constant.HINDI);
-    await expect(regPage.subjectOptionContainer).toContainText(constant.COMMERCE);
+    await expect(regPage.subjectOptionPill.filter({ hasText: constant.COMPUTER_SCIENCE })).toHaveCount(0);
+    await expect(regPage.subjectOptionPill).toContainText([constant.HINDI, constant.COMMERCE]);
   })
   test('remove all subjects', async ({ page }) => {
     const regPage = new RegPage(page)
@@ -183,12 +179,12 @@ test('subjects', async () => {
     }
     for (var subject of constant.SUBJECTS_ALL) {
       await regPage.removeSubjectPill(subject);
-      await expect(regPage.subjectOptionContainer).not.toContainText(subject);
+      await expect(regPage.subjectOptionPill.filter({ hasText: subject })).toHaveCount(0);
     }
   })
 })
 
-test('city and state dropdown behavior', async () => {
+test.describe('city options depend on the selected state', async () => {
   test('city is disabled when state is not selected', async ({ page }) => {
     const regPage = new RegPage(page);
     await regPage.goto();
@@ -198,19 +194,130 @@ test('city and state dropdown behavior', async () => {
     const regPage = new RegPage(page);
     await regPage.goto();
     await regPage.selectState(constant.HARYANA);
+    await regPage.cityDropdownContainer.click();
     await expect(regPage.cityOptionList.getByRole('option', { name: constant.KARNAL })).toBeAttached();
     await expect(regPage.cityOptionList.getByRole('option', { name: constant.PANIPAT })).toBeAttached();
 
     await regPage.selectState(constant.RAJASTHAN);
+    await regPage.cityDropdownContainer.click();
     await expect(regPage.cityOptionList.getByRole('option', { name: constant.JAIPUR })).toBeAttached();
     await expect(regPage.cityOptionList.getByRole('option', { name: constant.JAISELMER })).toBeAttached();
   })
 })
-//  -- city dropdown change based on states and is disabled if states is blank
 
-//  -- invalid email
-//  -- invalid mobile
-//  -- upload png jpg
+test.describe('email input can detect invalid email', async () => {
+  test('email requires @ sign', async ({ page }) => {
+    const regPage = new RegPage(page);
+    await regPage.goto();
+    await regPage.fillEmail(invalidData.email_no_at);
+    await regPage.clickSubmitButton();
+    await expect(regPage.emailTextInput).toHaveCSS(assertion.css_border_color, assertion.color_red_error);
+  })
+  test('email requires mail server', async ({ page }) => {
+    const regPage = new RegPage(page);
+    await regPage.goto();
+    await regPage.fillEmail(invalidData.email_no_mail_server);
+    await regPage.clickSubmitButton();
+    await expect(regPage.emailTextInput).toHaveCSS(assertion.css_border_color, assertion.color_red_error);
+  })
+  test('email requires username', async ({ page }) => {
+    const regPage = new RegPage(page);
+    await regPage.goto();
+    await regPage.fillEmail(invalidData.email_no_username);
+    await regPage.clickSubmitButton();
+    await expect(regPage.emailTextInput).toHaveCSS(assertion.css_border_color, assertion.color_red_error);
+  })
+  test('email requires domain', async ({ page }) => {
+    const regPage = new RegPage(page);
+    await regPage.goto();
+    await regPage.fillEmail(invalidData.email_no_domain);
+    await regPage.clickSubmitButton();
+    await expect(regPage.emailTextInput).toHaveCSS(assertion.css_border_color, assertion.color_red_error);
+  })
+  test('email requires domain to be longer than 1 char', async ({ page }) => {
+    const regPage = new RegPage(page);
+    await regPage.goto();
+    await regPage.fillEmail(invalidData.email_domain_too_short);
+    await regPage.clickSubmitButton();
+    await expect(regPage.emailTextInput).toHaveCSS(assertion.css_border_color, assertion.color_red_error);
+  })
+  test('email requires domain to be shorter than 7 char', async ({ page }) => {
+    const regPage = new RegPage(page);
+    await regPage.goto();
+    await regPage.fillEmail(invalidData.email_domain_too_long);
+    await regPage.clickSubmitButton();
+    await expect(regPage.emailTextInput).toHaveCSS(assertion.css_border_color, assertion.color_red_error);
+  })
+  test('email requires domain to contain only alphabets', async ({ page }) => {
+    const regPage = new RegPage(page);
+    await regPage.goto();
+    await regPage.fillEmail(invalidData.email_domain_has_nonalphabet);
+    await regPage.clickSubmitButton();
+    await expect(regPage.emailTextInput).toHaveCSS(assertion.css_border_color, assertion.color_red_error);
+  })
+})
+
+test.describe('mobile input can detect invalid mobile', async () => {
+  test('mobile requires input length to be equal to 10' , async ({ page }) => {
+    const regPage = new RegPage(page);
+    await regPage.goto();
+    await regPage.fillMobile(invalidData.mobile_has_less_than_10_digits);
+    await regPage.clickSubmitButton();
+    await expect(regPage.mobileTextInput).toHaveCSS(assertion.css_border_color, assertion.color_red_error);
+  })
+  test('mobile requires all characters to be numeric', async ({ page }) => {
+    const regPage = new RegPage(page);
+    await regPage.goto();
+    await regPage.fillMobile(invalidData.mobile_has_character);
+    await regPage.clickSubmitButton();
+    await expect(regPage.mobileTextInput).toHaveCSS(assertion.css_border_color, assertion.color_red_error);
+  })
+})
+
+test.describe('user can upload png and jpg files', async () => {
+  test('user can upload 1mb jpg file', async ({ page }) => {
+    const regPage = new RegPage(page);
+    const regPageUtils = new RegPageUtils(regPage, validData, invalidData, constant, filePath, assertion);
+    await regPage.goto();
+    await regPageUtils.fillAllRequiredFields();
+    await regPage.uploadPicture(filePath.one_mb_jpg_file);
+    await regPage.clickSubmitButton();
+    await expect(regPage.summarySubmitModal).toBeVisible();
+    await expect(regPage.pictureModalRow.locator('td').nth(1)).toHaveText(assertion.one_mb_jpg_file);
+  })
+  test('user can upload 1mb png file', async ({ page }) => {
+    const regPage = new RegPage(page);
+    const regPageUtils = new RegPageUtils(regPage, validData, invalidData, constant, filePath, assertion);
+    await regPage.goto();
+    await regPageUtils.fillAllRequiredFields();
+    await regPage.uploadPicture(filePath.one_mb_png_file);
+    await regPage.clickSubmitButton();
+    await expect(regPage.summarySubmitModal).toBeVisible();
+    await expect(regPage.pictureModalRow.locator('td').nth(1)).toHaveText(assertion.one_mb_png_file);
+  })
+  test('user can upload 10mb jpg file', async ({ page }) => {
+    const regPage = new RegPage(page);
+    const regPageUtils = new RegPageUtils(regPage, validData, invalidData, constant, filePath, assertion);
+    await regPage.goto();
+    await regPageUtils.fillAllRequiredFields();
+    await regPage.uploadPicture(filePath.ten_mb_jpg_file);
+    await regPage.clickSubmitButton();
+    await expect(regPage.summarySubmitModal).toBeVisible();
+    await expect(regPage.pictureModalRow.locator('td').nth(1)).toHaveText(assertion.ten_mb_jpg_file);
+  })
+  test('user can upload 10mb png file', async ({ page }) => {
+    const regPage = new RegPage(page);
+    const regPageUtils = new RegPageUtils(regPage, validData, invalidData, constant, filePath, assertion);
+    await regPage.goto();
+    await regPageUtils.fillAllRequiredFields();
+    await regPage.uploadPicture(filePath.ten_mb_png_file);
+    await regPage.clickSubmitButton();
+    await expect(regPage.summarySubmitModal).toBeVisible();
+    await expect(regPage.pictureModalRow.locator('td').nth(1)).toHaveText(assertion.ten_mb_png_file);
+  })
+})
+
+
 //  -- address accept new line address
 
 //  -- the form should be cleared after success submission

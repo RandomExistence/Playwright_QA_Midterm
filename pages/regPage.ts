@@ -30,10 +30,21 @@ export class RegPage {
   readonly submitButton: Locator;
   
   readonly subjectOptionContainer: Locator;
+  readonly subjectOptionPill: Locator;
   readonly stateDropdownContainer: Locator;
   readonly cityDropdownContainer: Locator;
 
   readonly summarySubmitModal: Locator;
+  readonly studentnameModalRow: Locator;
+  readonly studentemailModalRow: Locator;
+  readonly genderModalRow: Locator;
+  readonly mobileModalRow: Locator;
+  readonly dateofbirthModalRow: Locator;
+  readonly subjectsModalRow: Locator;
+  readonly hobbiesModalRow: Locator;
+  readonly pictureModalRow: Locator;
+  readonly addressModalRow: Locator;
+  readonly stateandcityModalRow: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -63,10 +74,21 @@ export class RegPage {
     this.submitButton = this.page.getByRole('button', { name: 'Submit' })
 
     this.subjectOptionContainer = this.page.locator('#subjectsContainer')
+    this.subjectOptionPill = this.page.locator('#subjectsContainer .subjects-auto-complete__multi-value__label')
     this.stateDropdownContainer = this.page.locator('#state')
     this.cityDropdownContainer = this.page.locator('#city')
 
     this.summarySubmitModal = this.page.getByRole('dialog', { name: 'Thanks for submitting the form' })
+    this.studentnameModalRow = this.page.locator('tr', { hasText: 'Student Name' });
+    this.studentemailModalRow = this.page.locator('tr', { hasText: 'Student Email'});
+    this.genderModalRow = this.page.locator('tr', { hasText: 'Gender' });
+    this.mobileModalRow = this.page.locator('tr', { hasText: 'Mobile'});
+    this.dateofbirthModalRow = this.page.locator('tr', { hasText: 'Date of Birth'});
+    this.subjectsModalRow = this.page.locator('tr', { hasText: 'Subjects'});
+    this.hobbiesModalRow = this.page.locator('tr', { hasText: 'Hobbies'});
+    this.pictureModalRow = this.page.locator('tr', { hasText: 'Picture'});
+    this.addressModalRow = this.page.locator('tr', { hasText: 'Address'});
+    this.stateandcityModalRow = this.page.locator('tr', { hasText: 'State and City'});
   }
 
   async goto() {
@@ -139,6 +161,7 @@ export class RegPage {
   }
 
   async clickSubmitButton() {
+    await this.submitButton.scrollIntoViewIfNeeded();
     await this.submitButton.click();
   }
 

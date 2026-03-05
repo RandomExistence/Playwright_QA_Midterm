@@ -33,11 +33,13 @@ export class ValidData {
 export class InvalidData {
   readonly empty = '';
   readonly gibberish = '8u9int4yq';
+  readonly email_no_username = '@mail.com';
   readonly email_no_at = 'user02gmail.com';
   readonly email_no_mail_server = 'user02@.dwcom';
-  readonly email_no_username = '@mail.com';
-  readonly email_too_short_domain = 'user@gmail.a';
   readonly email_no_domain = 'user@gmail';
+  readonly email_domain_too_short = 'user@gmail.a';
+  readonly email_domain_has_nonalphabet = 'user@gmail.co2'
+  readonly email_domain_too_long = 'user@gmail.comcomc';
   readonly mobile_has_character = '012345_789'
   readonly mobile_has_less_than_10_digits = '676767'
 }
@@ -145,4 +147,9 @@ export class Assertion {
   readonly css_border_left_color = 'border-left-color'
   readonly css_border_right_color = 'border-right-color'
   readonly css_border_top_color = 'border-top-color'
+
+  readonly one_mb_png_file = '1mb.png'
+  readonly ten_mb_png_file = '10mb.png'
+  readonly one_mb_jpg_file = '1mb.jpg'
+  readonly ten_mb_jpg_file = '10mb.jpg'
 }
