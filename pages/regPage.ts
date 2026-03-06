@@ -153,7 +153,7 @@ export class RegPage {
     await this.calendarDialog.locator('.react-datepicker__year-select').selectOption(year);
     await this.calendarDialog.locator('.react-datepicker__month-select').selectOption(month);
     await this.page.getByRole('gridcell', {
-      name: regexDateGenerator(day, month, year)
+      name: this.regexDateGenerator(day, month, year)
     }).click();
   }
   
@@ -181,27 +181,28 @@ export class RegPage {
   }
 
   // ------------------------------------ UTILITIES ------------------------------------ //
+
   async setTime(year:number, month:number, day:number, hour:number=0, minute:number=0) {
     await this.page.clock.setFixedTime(new Date(year, month, day, hour, minute));
   }
-}
 
-function regexDateGenerator(day:string, month:string, year:string) {
-  var suffix = 'th'
-  if (day.length == 2) {
-    if (day.charAt(0) == '1') {
-      return new RegExp(`${month} ${day}${suffix}, ${year}`)
+  private regexDateGenerator(day:string, month:string, year:string) {
+    let suffix = 'th'
+    if (day.length == 2) {
+      if (day.charAt(0) == '1') {
+        return new RegExp(`${month} ${day}${suffix}, ${year}`)
+      }
+      else {
+        if (day.charAt(1) === '1') { suffix = 'st' } else 
+        if (day.charAt(1) === '2') { suffix = 'nd' } else
+        if (day.charAt(1) === '3') { suffix = 'rd' }
+      }
     }
-    else {
-      if (day.charAt(1) === '1') { suffix = 'st' } else 
-      if (day.charAt(1) === '2') { suffix = 'nd' } else
-      if (day.charAt(1) === '3') { suffix = 'rd' }
+    else if (day.length == 1) {
+      if (day.charAt(0) === '1') { suffix = 'st' } else 
+      if (day.charAt(0) === '2') { suffix = 'nd' } else
+      if (day.charAt(0) === '3') { suffix = 'rd' }
     }
+    return new RegExp(`${month} ${day}${suffix}, ${year}`)
   }
-  else if (day.length == 1) {
-    if (day.charAt(0) === '1') { suffix = 'st' } else 
-    if (day.charAt(0) === '2') { suffix = 'nd' } else
-    if (day.charAt(0) === '3') { suffix = 'rd' }
-  }
-  return new RegExp(`${month} ${day}${suffix}, ${year}`)
 }
