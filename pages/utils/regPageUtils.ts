@@ -2,38 +2,24 @@ import { Locator } from '@playwright/test'
 import { RegPage } from '../regPage'
 import { ValidData, InvalidData, Constant, FilePath, Assertion  } from '../../data/regData';
 
+const validData = new ValidData();
+const invalidData = new InvalidData();
+const constant = new Constant();
+const filePath = new FilePath('./');
+const assertion = new Assertion();
+
 export class RegPageUtils {
   
   readonly regPage;
-  readonly validData;
-  readonly invalidData;
-  readonly constant;
-  readonly filePath;
-  readonly assertion;
 
-  constructor(
-    regPage: RegPage,
-    validData: ValidData,
-    invalidData: InvalidData,
-    constant: Constant,
-    filePath: FilePath,
-    assertioin: Assertion
-  ) {
+  constructor(regPage: RegPage) {
     this.regPage = regPage;
-    this.validData = validData;
-    this.invalidData = invalidData;
-    this.constant = constant;
-    this.filePath = filePath;
-    this.assertion = assertioin
   }
 
   async fillAllRequiredFields() {
-    await this.regPage.fillFirstname(this.validData.firstname_default);
-    await this.regPage.fillLastname(this.validData.lastname_default);
-    await this.regPage.selectGender(this.constant.MALE);
-    await this.regPage.fillMobile(this.validData.mobile_default);
+    await this.regPage.fillFirstname(validData.firstname_default);
+    await this.regPage.fillLastname(validData.lastname_default);
+    await this.regPage.selectGender(constant.MALE);
+    await this.regPage.fillMobile(validData.mobile_default);
   }
-
-
-
 }
